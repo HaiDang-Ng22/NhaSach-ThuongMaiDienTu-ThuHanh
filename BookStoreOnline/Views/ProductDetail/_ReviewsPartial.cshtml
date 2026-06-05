@@ -1,0 +1,26 @@
+﻿@model List<BookStoreOnline.Models.DANHGIA>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var review in Model)
+    {
+        <div class="review">
+            <p>
+                <strong>@review.KHACHHANG.Ten</strong> -
+                <span>@review.NgayTao.ToString("dd/MM/yyyy HH:mm")</span>
+            </p>
+            <p>@review.NoiDung</p>
+            <div class="rating">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="fa @(i <= review.SoSao ? "fa-star" : "fa-star-o")"></i>
+                }
+                <span>(@review.SoSao sao)</span>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+}
