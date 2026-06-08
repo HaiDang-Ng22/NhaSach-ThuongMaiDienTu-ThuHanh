@@ -1,14 +1,6 @@
 # BookStoreOnline - Dự Án Nhà Sách Trực Tuyến
 
 Dự án thực hành môn học Thương mại điện tử: Xây dựng website bán sách trực tuyến sử dụng ASP.NET MVC 5 và Entity Framework.
-
----
-
-## 🔗 Tài liệu liên quan
-* **Bảng tiến độ & Product Backlog:** [Google Sheets](https://docs.google.com/spreadsheets/d/1IAEy-JfDoP9tZ6jsPZFjDkG-6RMTCyMpGRs5qwoNu7E/edit?hl=vi&gid=2070379104#gid=2070379104)
-* **Kịch bản kiểm thử (Test Cases):** [Google Docs](https://docs.google.com/document/d/12VwvqE7veXStKUt0VwFAsbPb8rjHgPoH/edit?usp=sharing&ouid=112040097888957867090&rtpof=true&sd=true)
-* **Link Website Demo:** [BookStoreOnline](http://manhhoang8t4-001-site1.ltempurl.com/)
-
 ---
 
 ## 🛠️ Công nghệ sử dụng
