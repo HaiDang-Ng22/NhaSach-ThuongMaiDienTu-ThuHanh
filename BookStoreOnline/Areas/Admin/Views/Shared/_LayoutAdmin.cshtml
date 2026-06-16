@@ -1,0 +1,369 @@
+@{
+    var admin = Session["TaiKhoan"] as BookStoreOnline.Models.NHANVIEN;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Quản Trị Nhà Sách</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link href="~/Content/AdminAssets/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="~/Content/AdminAssets/css/admin.css" rel="stylesheet">
+    <link rel="icon" href="~/Images/z5482551824090_8d0041d8091c42fc59c7cfff0e837099.jpg" />
+    <link href="~/Content/AdminAssets/css/PagedList.css" rel="stylesheet" />
+    <link href="~/Content/AdminAssets/css/head.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/ldifb3wbpipz2j97ne2j62ij420yp8y4n7c2cwyz0t081m6b/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+        tinymce.init({
+            selector: 'textarea#editor',
+        });
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --brand: #e8392a;
+            --brand-light: #fef2f2;
+            --bg-body: #f8fafc;
+            --text-main: #334155;
+            --text-dark: #0f172a;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif !important;
+            background-color: var(--bg-body) !important;
+            color: var(--text-main);
+        }
+
+        #wrapper {
+            display: flex;
+        }
+
+        /* Sidebar Customization (White theme) */
+        .sidebar-white {
+            background-color: #ffffff !important;
+            border-right: 1px solid var(--border-color);
+            min-height: 100vh;
+            width: 250px !important;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand-white {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark) !important;
+            text-decoration: none;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+            .sidebar-brand-white i {
+                color: var(--brand);
+                font-size: 22px;
+            }
+
+        .app-sidebar-wrap {
+            padding: 20px 0;
+        }
+
+        .app-sidebar__user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        /* Bo góc vuông hiện đại cho Avatar User */
+        .app-sidebar__user-avatar {
+            border-radius: 12px !important;
+            border: 1.5px solid var(--border-color);
+            padding: 2px;
+            background: #fff;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .app-sidebar__user:hover .app-sidebar__user-avatar {
+            transform: scale(1.05);
+        }
+
+        .app-sidebar__user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .app-sidebar__user-designation {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .app-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Tối ưu chữ IN ĐẬM và khoảng cách Item Menu */
+        .app-menu__item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #334155 !important; /* Đậm màu chữ gốc */
+            font-size: 14px;
+            font-weight: 700 !important; /* BẮT BUỘC CHỮ IN ĐẬM */
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border-left: 4px solid transparent;
+            border-radius: 0 8px 8px 0;
+            margin-right: 10px;
+        }
+
+            /* Sửa lỗi hiển thị màu Icon (Không bị biến thành màu trắng) */
+            .app-menu__item i {
+                color: #475569 !important; /* Đảm bảo luôn hiện màu xám đen rõ ràng */
+                font-size: 16px;
+                display: inline-block;
+                min-width: 24px;
+            }
+
+            .app-menu__item:hover {
+                background-color: #f1f5f9;
+                color: var(--brand) !important;
+                text-decoration: none;
+                padding-left: 28px; /* Hiệu ứng đẩy nhẹ khi hover sinh động */
+            }
+
+                .app-menu__item:hover i {
+                    color: var(--brand) !important; /* Icon đổi sang đỏ khi hover */
+                }
+
+            .app-menu__item.active,
+            .app-menu__item:focus {
+                background-color: var(--brand-light);
+                color: var(--brand) !important;
+                border-left-color: var(--brand);
+            }
+
+                .app-menu__item.active i {
+                    color: var(--brand) !important; /* Icon đổi sang đỏ khi trang active */
+                }
+
+        /* Thu gọn khoảng cách các đường kẻ danh mục */
+        .sidebar-divider {
+            border-top: 1px solid #f1f5f9 !important;
+            margin: 8px 0;
+            opacity: 0.6;
+        }
+
+        /* Topbar Customization */
+        .topbar {
+            height: 70px;
+            background-color: #ffffff !important;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: none !important;
+        }
+
+        .dropdown-toggle-custom {
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dark) !important;
+        }
+
+            .dropdown-toggle-custom::after {
+                display: none;
+            }
+
+        .img-profile-custom {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--border-color);
+        }
+
+        /* Content Area */
+        #content-wrapper {
+            background-color: var(--bg-body);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container-fluid {
+            padding: 30px;
+        }
+    </style>
+</head>
+<body id="page-top">
+    <div id="wrapper">
+
+        <div class="sidebar-white" id="accordionSidebar">
+            <a class="sidebar-brand-white" href="/Admin">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>QUẢN TRỊ VIÊN</span>
+            </a>
+
+            <div class="app-sidebar-wrap">
+                <div class="app-sidebar__user">
+                    <img class="app-sidebar__user-avatar" src="~/Images/z5482551824090_8d0041d8091c42fc59c7cfff0e837099.jpg" width="44" height="44" alt="User Image">
+                    <div>
+                        <p class="app-sidebar__user-name">Quản lý hệ thống</p>
+                        <p class="app-sidebar__user-designation">Online</p>
+                    </div>
+                </div>
+
+                <ul class="app-menu">
+                    <li>
+                        <a class="app-menu__item @(Request.RequestContext.RouteData.Values["action"].ToString() == "Home_Page" ? "active" : "")" href="/Admin/Home_Page">
+                            <i class="bi bi-speedometer2 mr-2"></i>
+                            <span>Trang Tổng Quan</span>
+                        </a>
+                    </li>
+
+                    <div class="sidebar-divider"></div>
+
+                    @if (admin != null && (admin.Quyen == 1 || admin.Quyen == 2))
+                    {
+                        <li>
+                            <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "Categories" ? "active" : "")" href="/Admin/Categories">
+                                <i class="bi bi-tags mr-2"></i>
+                                <span>Danh Mục Loại Sách</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "Products" ? "active" : "")" href="/Admin/Products">
+                                <i class="bi bi-book mr-2"></i>
+                                <span>Danh Sách Sách</span>
+                            </a>
+                        </li>
+
+                        <div class="sidebar-divider"></div>
+                    }
+
+                    @if (admin != null && admin.Quyen == 1)
+                    {
+                        <li>
+                            <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "AdminAccounts" ? "active" : "")" href="/Admin/AdminAccounts">
+                                <i class="bi bi-person-badge mr-2"></i>
+                                <span>Tài Khoản Admin</span>
+                            </a>
+                        </li>
+                    }
+
+                    @if (admin != null && (admin.Quyen == 1 || admin.Quyen == 2))
+                    {
+                        <li>
+                            <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "ControlUser" ? "active" : "")" href="/Admin/ControlUser">
+                                <i class="bi bi-people mr-2"></i>
+                                <span>Khách Hàng</span>
+                            </a>
+                        </li>
+
+                        <div class="sidebar-divider"></div>
+                    }
+
+                    <li>
+                        <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "OrdersAdmin" ? "active" : "")"
+                           href="@Url.Action("Index", "OrdersAdmin", new { area = "Admin", status = "" })">
+                            <i class="bi bi-bag-check-fill mr-2"></i>
+                            <span>Quản Lý Đơn Hàng</span>
+                        </a>
+                    </li>
+
+                    <div class="sidebar-divider"></div>
+
+                    @if (admin != null && (admin.Quyen == 1 || admin.Quyen == 2))
+                    {
+                        <li>
+                            <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "Statistics" ? "active" : "")" href="/Admin/Statistics/Statistics">
+                                <i class="bi bi-graph-up-arrow mr-2"></i>
+                                <span>Thống Kê Doanh Thu</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "Discount" ? "active" : "")" href="/Admin/Discount">
+                                <i class="bi bi-ticket-perforated mr-2"></i>
+                                <span>Khuyến Mãi</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="app-menu__item @(Request.RequestContext.RouteData.Values["controller"].ToString() == "AdminReview" ? "active" : "")" href="/Admin/AdminReview">
+                                <i class="bi bi-chat-square-text mr-2"></i>
+                                <span>Quản Lý Đánh Giá</span>
+                            </a>
+                        </li>
+
+                        <div class="sidebar-divider"></div>
+                    }
+
+                    <li>
+                        <a class="app-menu__item text-danger" href="/User/LogOut">
+                            <i class="bi bi-box-arrow-right mr-2"></i>
+                            <span>Đăng Xuất</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="content-wrapper">
+
+            @if (admin != null)
+            {
+                <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <div class="dropdown">
+                                <button class="dropdown-toggle dropdown-toggle-custom" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-700 font-weight-bold">@admin.Ten</span>
+                                    <img class="img-profile-custom" src="https://yinnepal.files.wordpress.com/2017/11/admin.png?w=60" alt="Admin Avatar">
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="dropdownMenuButton1" style="border-radius:10px; margin-top:10px;">
+                                    <li>
+                                        <a class="dropdown-item text-danger font-weight-bold" href="/User/LogOut">
+                                            <i class="bi bi-box-arrow-right mr-2"></i>
+                                            Đăng xuất
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            }
+
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.6.0/umd/popper.min.js" integrity="sha512-BmM0/BQlqh02wuK5Gz9yrbe7VyIVwOzD1o40yi1IsTjriX/NGF37NyXHfmFzIlMmoSIBXgqDiG1VNU6kB5dBbA==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

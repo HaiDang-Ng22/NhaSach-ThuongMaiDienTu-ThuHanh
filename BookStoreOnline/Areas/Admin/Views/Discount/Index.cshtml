@@ -1,0 +1,226 @@
+@model IEnumerable<BookStoreOnline.Models.KHUYENMAI>
+
+@{
+    ViewBag.Title = "Quản Lý Khuyến Mãi";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var price = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<style>
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-title { font-size:20px; font-weight:800; color:#0f172a; }
+    .page-title span { color:#e8392a; }
+    .btn-add-new {
+        background: linear-gradient(135deg, #e8392a, #ff6b5b);
+        color: #fff; border: none; border-radius: 10px;
+        padding: 10px 20px; font-size: 14px; font-weight: 600;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        transition: all 0.2s; box-shadow: 0 4px 12px rgba(232,57,42,0.3);
+        cursor: pointer;
+    }
+    .btn-add-new:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(232,57,42,0.4); color:#fff; text-decoration:none; }
+    
+    .section-card {
+        background:#fff; border-radius:16px;
+        border:1px solid #f1f5f9;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04); overflow:hidden;
+    }
+    .section-card-header {
+        padding:18px 24px; border-bottom:1px solid #f1f5f9;
+        display:flex; align-items:center; justify-content:space-between;
+    }
+    .section-card-title { font-size:15px; font-weight:700; color:#0f172a; }
+    .badge-num {
+        background:#f1f5f9; color:#475569; border-radius:6px;
+        font-size:12px; font-weight:700; padding:2px 10px;
+    }
+    
+    .admin-table { width:100%; border-collapse:collapse; }
+    .admin-table thead th {
+        background:#f8fafc; font-size:11px; font-weight:700;
+        text-transform:uppercase; letter-spacing:0.6px;
+        color:#64748b; padding:12px 16px;
+        border-bottom:1px solid #e2e8f0; text-align:left;
+        white-space: nowrap;
+    }
+    .admin-table tbody tr { border-bottom:1px solid #f1f5f9; transition:background 0.15s; }
+    .admin-table tbody tr:hover { background:#f8fafc; }
+    .admin-table tbody tr:last-child { border-bottom:none; }
+    .admin-table tbody td { padding:14px 16px; font-size:13px; color:#334155; vertical-align:middle; }
+    
+    /* Premium iOS Switch */
+    .ios-switch-container {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    .ios-switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 24px;
+    }
+    .ios-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .ios-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #cbd5e1;
+        transition: .3s;
+        border-radius: 24px;
+    }
+    .ios-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input:checked + .ios-slider {
+        background-color: #22c55e;
+    }
+    input:checked + .ios-slider:before {
+        transform: translateX(18px);
+    }
+
+    .btn-edit {
+        display:inline-flex; align-items:center; gap:4px;
+        background:#fef3c7; color:#92400e; border:none; border-radius:7px;
+        padding:5px 12px; font-size:11px; font-weight:700;
+        text-decoration:none; transition:all 0.2s; white-space:nowrap;
+    }
+    .btn-edit:hover { background:#fde68a; color:#78350f; text-decoration:none; }
+    .btn-del {
+        display:inline-flex; align-items:center; gap:4px;
+        background:#fee2e2; color:#991b1b; border:none; border-radius:7px;
+        padding:5px 12px; font-size:11px; font-weight:700;
+        text-decoration:none; transition:all 0.2s; white-space:nowrap;
+    }
+    .btn-del:hover { background:#fecaca; color:#7f1d1d; text-decoration:none; }
+    
+    .empty-state { text-align:center; padding:48px 20px; color:#94a3b8; }
+    .empty-state i { font-size:40px; margin-bottom:12px; display:block; }
+</style>
+
+<div class="page-header">
+    <div class="page-title">Quản Lý <span>Khuyến Mãi</span></div>
+    <a class="btn-add-new" href="/Admin/Discount/Create">
+        <i class="bi bi-plus-lg"></i> Tạo Khuyến Mãi Mới
+    </a>
+</div>
+
+<div class="section-card">
+    <div class="section-card-header">
+        <span class="section-card-title"><i class="bi bi-ticket-perforated-fill me-2" style="color:#e8392a"></i>Các Chương Trình Khuyến Mãi</span>
+        <span class="badge-num">@Model.Count() chương trình</span>
+    </div>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th style="width:60px">ID</th>
+                    <th>Chương Trình</th>
+                    <th>Mã KM</th>
+                    <th>Mô Tả</th>
+                    <th>Hiệu Lực</th>
+                    <th>Mức Giảm</th>
+                    <th>Áp Dụng Từ</th>
+                    <th>Số Lần Dùng</th>
+                    <th>Kích Hoạt</th>
+                    <th style="width:160px; text-align:center;">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><span class="badge-num">#@item.ID</span></td>
+                            <td><strong>@item.TenChuongTrinh</strong></td>
+                            <td><span class="badge bg-secondary">@item.MaKM</span></td>
+                            <td>
+                                <div style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="@item.MoTa">
+                                    @item.MoTa
+                                </div>
+                            </td>
+                            <td>
+                                <div style="font-size:12px; color:#64748b;">
+                                    Tố: @item.NgayBatDau.ToString("dd/MM/yyyy")<br />
+                                    Lúc: @item.NgayKetThuc.ToString("dd/MM/yyyy")
+                                </div>
+                            </td>
+                            <td><strong style="color:#e8392a;">@item.SoTienKM.ToString("C", price)</strong></td>
+                            <td>@item.SoTienMuaHangToiThieu.ToString("C", price)</td>
+                            <td><span class="badge bg-light text-dark">@item.SoLanDung</span></td>
+                            <td>
+                                <label class="ios-switch-container">
+                                    <span class="ios-switch">
+                                        <input type="checkbox" class="activation-toggle" data-id="@item.ID" @(item.KichHoat ? "checked" : "")>
+                                        <span class="ios-slider"></span>
+                                    </span>
+                                </label>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <a href="@Url.Action("Edit", new { id = item.ID })" class="btn-edit">
+                                        <i class="bi bi-pencil-fill"></i> Sửa
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.ID })" class="btn-del">
+                                        <i class="bi bi-trash-fill"></i> Xóa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="10">
+                            <div class="empty-state">
+                                <i class="bi bi-ticket-perforated"></i>
+                                Chưa có chương trình khuyến mãi nào. Hãy tạo mới ngay!
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.activation-toggle').change(function() {
+            var isChecked = $(this).is(':checked');
+            var id = $(this).data('id');
+            var $toggle = $(this);
+
+            $.ajax({
+                url: '@Url.Action("ToggleActivation", "Discount")',
+                type: 'POST',
+                data: { id: id, isActive: isChecked },
+                success: function(response) {
+                    if (!response.success) {
+                        alert('Có lỗi xảy ra: ' + response.message);
+                        $toggle.prop('checked', !isChecked); // Revert switch state
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Có lỗi xảy ra khi cập nhật trạng thái. Chi tiết lỗi: ' + error);
+                    $toggle.prop('checked', !isChecked); // Revert switch state
+                }
+            });
+        });
+    });
+</script>
