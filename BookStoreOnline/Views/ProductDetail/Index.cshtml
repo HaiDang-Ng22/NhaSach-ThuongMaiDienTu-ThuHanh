@@ -388,7 +388,21 @@
 
                     <div class="product-meta">
                         <span class="meta-item"><i class="bi bi-person-fill"></i> Tác giả: <strong>@Model.TacGia</strong></span>
-                        <span class="meta-item"><i class="bi bi-tag-fill"></i> Thể loại: <strong>@Model.LOAI.Tenloai</strong></span>
+                        <span class="meta-item"><i class="bi bi-tag-fill"></i> Thể loại: 
+                            <strong>
+                                @{
+                                    var categories = ViewBag.Categories as List<string>;
+                                    if (categories != null && categories.Count > 0)
+                                    {
+                                        <text>@string.Join(", ", categories)</text>
+                                    }
+                                    else if (Model.LOAI != null)
+                                    {
+                                        <text>@Model.LOAI.Tenloai</text>
+                                    }
+                                }
+                            </strong>
+                        </span>
                     </div>
 
                     <div class="product-price-box">
@@ -415,6 +429,19 @@
                         {
                             using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { @class = "cart-action-group" }))
                             {
+                                var volumes = ViewBag.Volumes as List<BookStoreOnline.Models.VolumeDto>;
+                                if (volumes != null && volumes.Count > 0)
+                                {
+                                    <div style="width: 100%; margin-bottom: 10px;">
+                                        <label for="volume-select" style="font-weight: 600; margin-right: 10px;">Chọn Tập:</label>
+                                        <select name="VolumeID" id="volume-select" style="padding: 8px; border-radius: 8px; border: 1px solid #d1d5db;" onchange="updateMaxQty(this)">
+                                            @foreach (var vol in volumes)
+                                            {
+                                                <option value="@vol.MaTap" data-qty="@vol.SoLuong">@vol.TenTap (Còn @vol.SoLuong)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
                                 <div class="quantity-control">
                                     <button type="button" onclick="adjustQty(-1)">-</button>
                                     <input type="number" id="purchase-qty" name="Quantity" value="1" min="1" max="@Model.SoLuong">
@@ -537,43 +564,94 @@
 
         </div>
 
+<script>
+    function loadReviews() {
+        var productId = @Model.MaSanPham;
+        fetch('@Url.Action("LoadReviews", "ProductDetail")?productId=' + productId)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('reviews-container').innerHTML = html;
+            })
+            .catch(err => console.error(err));
+    }
 
+    // Xử lý submit form đánh giá
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        // Xử lý submit form đánh giá
-        document.getElementById('review-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+            const formData = new FormData(this);
 
-        const formData = new FormData(this);
-
-        fetch(this.action, {
-        method: 'POST',
-        body: formData
-        }).then(() => {
-        loadReviews(); // Reload đánh giá sau khi submit
-        this.reset(); // Reset form
-        alert('Đánh giá đã được gửi!');
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            }).then(() => {
+                loadReviews(); // Reload đánh giá sau khi submit
+                this.reset(); // Reset form
+                alert('Đánh giá đã được gửi!');
+            });
         });
-        });
+    }
 
-        // Xử lý rating sao
-        function initStarRating() {
-        const stars = document.querySelectorAll('.rating-stars .star');
+    // Xử lý rating sao
+    function initStarRating() {
+        const stars = document.querySelectorAll('.rating-stars-interactive .star');
         const ratingInput = document.getElementById('rating');
 
+        if (!stars.length || !ratingInput) return;
+
         stars.forEach(star => {
-        star.addEventListener('click', function() {
-        const value = this.getAttribute('data-value');
-        ratingInput.value = value;
-        updateStars(value);
-        });
+            star.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                ratingInput.value = value;
+                updateStars(value);
+            });
         });
 
         function updateStars(value) {
-        stars.forEach(star => {
-        const starValue = star.getAttribute('data-value');
-        star.classList.toggle('selected', starValue <= value);
-        });
+            stars.forEach(star => {
+                const starValue = star.getAttribute('data-value');
+                star.classList.toggle('active', starValue <= value);
+            });
         }
+    }
+
+    function updateMaxQty(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+        var maxQty = selectedOption.getAttribute('data-qty');
+        var qtyInput = document.getElementById('purchase-qty');
+        if (qtyInput) {
+            qtyInput.max = maxQty;
+            if (parseInt(qtyInput.value) > parseInt(maxQty)) {
+                qtyInput.value = maxQty;
+            }
+            if (parseInt(maxQty) === 0) {
+                qtyInput.value = 0;
+            }
         }
-        </script>
+    }
+
+    function adjustQty(amount) {
+        var qtyInput = document.getElementById('purchase-qty');
+        if (!qtyInput) return;
+        var current = parseInt(qtyInput.value) || 0;
+        var min = parseInt(qtyInput.min) || 1;
+        var max = parseInt(qtyInput.max) || 1;
+        var newValue = current + amount;
+        if (newValue >= min && newValue <= max) {
+            qtyInput.value = newValue;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadReviews();
+        initStarRating();
+        // Cập nhật số lượng max ban đầu dựa trên option được chọn đầu tiên
+        var selectElement = document.getElementById('volume-select');
+        if (selectElement) {
+            updateMaxQty(selectElement);
+        }
+    });
+</script>
     </div>

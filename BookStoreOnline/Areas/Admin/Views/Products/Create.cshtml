@@ -105,16 +105,37 @@
                         @Html.ValidationMessageFor(model => model.Gia, "", new { @class = "field-error" })
                     </div>
                     <div class="form-group">
-                        <label class="admin-label">Số Lượng <span style="color:#e8392a">*</span></label>
-                        @Html.EditorFor(model => model.SoLuong, new { htmlAttributes = new { @class = "admin-input", @placeholder = "0" } })
-                        @Html.ValidationMessageFor(model => model.SoLuong, "", new { @class = "field-error" })
+                        <label class="admin-label">Số Lượng (Tổng) <span style="color:#64748b; font-weight:normal;">(Tự động tính)</span></label>
+                        <input type="text" class="admin-input" value="0" disabled style="background:#e2e8f0; color:#94a3b8;" />
                     </div>
                 </div>
 
                 <div class="form-group">
+                    <label class="admin-label">Danh Sách Tập Sách <span style="color:#e8392a">*</span> <span style="color:#64748b; font-weight:normal; font-size:12px;">(Nếu sách lẻ, nhập Tên tập là "Tập 1" hoặc để trống)</span></label>
+                    <div id="volume-container">
+                        <div class="volume-row" style="display:flex; gap:10px; margin-bottom:10px;">
+                            <input type="text" name="VolumeNames" class="admin-input" placeholder="Tên tập (ví dụ: Tập 1)" style="flex: 2;" value="Tập 1">
+                            <input type="number" name="VolumeQuantities" class="admin-input" placeholder="Số lượng" min="0" value="0" style="flex: 1;" required>
+                            <button type="button" class="btn-remove-vol" style="background:#dc2626; color:#fff; border:none; border-radius:8px; padding:0 15px; cursor:pointer;" onclick="this.parentElement.remove()">X</button>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-add-vol" style="background:#f1f5f9; color:#0f172a; border:none; padding:8px 15px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; margin-top:5px;">+ Thêm Tập</button>
+                </div>
+
+                <div class="form-group">
                     <label class="admin-label">Thể Loại <span style="color:#e8392a">*</span></label>
-                    @Html.DropDownList("MaLoai", (SelectList)ViewBag.LoaiSP, "--Chọn thể loại--", new { @class = "admin-select" })
-                    @Html.ValidationMessageFor(model => model.MaLoai, "", new { @class = "field-error" })
+                    <div style="max-height: 150px; overflow-y: auto; border: 1.5px solid #e2e8f0; padding: 10px; border-radius: 10px; background: #f8fafc;">
+                        @if (ViewBag.AllCategories != null)
+                        {
+                            foreach (var cat in (List<BookStoreOnline.Models.LOAI>)ViewBag.AllCategories)
+                            {
+                                <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" name="SelectedCategories" value="@cat.Maloai" id="cat_@cat.Maloai" style="width:16px; height:16px; cursor:pointer;" />
+                                    <label for="cat_@cat.Maloai" style="margin:0; font-size:14px; cursor:pointer; color:#0f172a;">@cat.Tenloai</label>
+                                </div>
+                            }
+                        }
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -166,4 +187,20 @@ function previewImage(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+document.getElementById('btn-add-vol').addEventListener('click', function() {
+    var container = document.getElementById('volume-container');
+    var row = document.createElement('div');
+    row.className = 'volume-row';
+    row.style.cssText = 'display:flex; gap:10px; margin-bottom:10px;';
+    
+    var count = container.children.length + 1;
+    
+    row.innerHTML = `
+        <input type="text" name="VolumeNames" class="admin-input" placeholder="Tên tập (ví dụ: Tập ${count})" style="flex: 2;" value="Tập ${count}">
+        <input type="number" name="VolumeQuantities" class="admin-input" placeholder="Số lượng" min="0" value="0" style="flex: 1;" required>
+        <button type="button" class="btn-remove-vol" style="background:#dc2626; color:#fff; border:none; border-radius:8px; padding:0 15px; cursor:pointer;" onclick="this.parentElement.remove()">X</button>
+    `;
+    container.appendChild(row);
+});
 </script>

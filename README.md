@@ -74,3 +74,20 @@ Dự án thực hành môn học Thương mại điện tử: Xây dựng websit
 #### 3. Phần Admin - Danh mục sách
 - Rà soát hệ thống quản lý danh mục sách trong phân hệ Admin.
 - Đảm bảo các chức năng cốt lõi (Xem danh sách danh mục, Thêm mới, Sửa thông tin và Xóa danh mục sách) liên kết dữ liệu chuẩn xác, không bị lỗi khi đồng bộ danh mục phân loại ra ngoài giao diện Trang chủ.
+
+#### 4. Phân hệ Quản lý Sách Nhiều Tập & Đa Thể Loại (Cập nhật mới)
+- **Tính năng sách có nhiều tập (Multi-volume):**
+  - Thêm bảng `TAP_SANPHAM` để quản lý các tập của một cuốn sách (ví dụ: Doraemon tập 1, 2, 3...). Mỗi tập có tên tập và số lượng tồn kho riêng biệt.
+  - Khi Admin tạo mới/chỉnh sửa sách, có giao diện động cho phép bấm "+ Thêm Tập" để nhập tên và số lượng cho từng tập. Tổng số lượng sách gốc tự động bằng tổng số lượng các tập cộng lại.
+  - Người dùng xem chi tiết sản phẩm sẽ thấy menu thả xuống chọn Tập, số lượng tối đa được mua tự động cập nhật theo số lượng còn lại của tập đó.
+  - Giỏ hàng (`CartController`) và đặt hàng (`CHITIETDONHANG`) được nâng cấp để lưu vết và trừ tồn kho chính xác theo từng Tập sách khi thanh toán.
+- **Tính năng Đa thể loại (Multi-category):**
+  - Tạo bảng trung gian `SANPHAM_LOAI` hỗ trợ một cuốn sách có nhiều thể loại cùng lúc.
+  - Admin thêm mới hoặc sửa sách bằng các Checkbox chọn nhiều thể loại.
+  - Giao diện người dùng tự động gộp và hiển thị toàn bộ thể loại của sách (cách nhau bằng dấu phẩy).
+- **Cải tiến & Sửa lỗi hệ thống:**
+  - **Đặt tên ảnh ngẫu nhiên (GUID):** Sửa mã upload ảnh lên Cloudinary sử dụng `Guid.NewGuid().ToString()` làm PublicId để tránh trường hợp các ảnh trùng tên file gốc ghi đè lên nhau.
+  - **Sửa lỗi không xóa được sản phẩm:** Bổ sung logic tự động xóa các bản ghi liên quan trong bảng `TAP_SANPHAM` và `SANPHAM_LOAI` trước khi xóa sản phẩm chính trong `ProductsController.DeleteConfirmed`, đảm bảo không vi phạm ràng buộc khoá ngoại (Foreign Key Constraint).
+  - **Khắc phục lỗi hiển thị trang Edit & Detail:** Sửa lỗi ép kiểu `ViewBag.Volumes` từ `List<dynamic>` sang `List<VolumeDto>` giúp hiển thị chính xác danh sách tập sách đã lưu khi Admin chỉnh sửa sản phẩm và khi User xem chi tiết sách.
+  - **Bổ sung Script & Điều khiển số lượng mua:** Bổ sung thẻ `<script>` bị thiếu, định nghĩa hàm gọi AJAX tải bình luận (`loadReviews`), hàm cập nhật số lượng tối đa theo tập (`updateMaxQty`), và hàm tăng giảm số lượng sản phẩm (`adjustQty`) cho các nút `+` và `-`.
+

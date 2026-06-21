@@ -117,21 +117,35 @@ namespace BookStoreOnline.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Invalid input");
             }
 
+            int? volumeId = null;
+            if (int.TryParse(product["VolumeID"], out var vId))
+            {
+                volumeId = vId;
+            }
+
             var productInDb = db.SANPHAMs.Find(productId);
             if (productInDb == null)
             {
                 return HttpNotFound("Product not found");
             }
 
-            var cartItem = cart.FirstOrDefault(p => p.ProductID == productId);
+            var cartItem = cart.FirstOrDefault(p => p.ProductID == productId && p.VolumeID == volumeId);
+            
+            // Temporary workaround for maxQty since we can't compile Volume entity yet without edmx update
+            int maxQty = productInDb.SoLuong;
+            if (volumeId.HasValue)
+            {
+                maxQty = db.Database.SqlQuery<int>("SELECT SoLuong FROM TAP_SANPHAM WHERE MaTap = @p0", volumeId.Value).FirstOrDefault();
+            }
+
             if (cartItem == null)
             {
-                if (quantity > productInDb.SoLuong)
+                if (quantity > maxQty)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Quá số lượng tồn trong kho");
                 }
 
-                cartItem = new CartItem(productId)
+                cartItem = new CartItem(productId, volumeId)
                 {
                     Number = quantity
                 };
@@ -139,7 +153,7 @@ namespace BookStoreOnline.Controllers
             }
             else
             {
-                if (cartItem.Number + quantity > productInDb.SoLuong)
+                if (cartItem.Number + quantity > maxQty)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Quá số lượng tồn trong kho.");
                 }
@@ -153,11 +167,11 @@ namespace BookStoreOnline.Controllers
             if (customer != null)
             {
                 db.Database.ExecuteSqlCommand(@"
-                    IF EXISTS (SELECT 1 FROM GIOHANG WHERE MaKH = @p0 AND MaSanPham = @p1)
-                        UPDATE GIOHANG SET SoLuong = @p2 WHERE MaKH = @p0 AND MaSanPham = @p1
+                    IF EXISTS (SELECT 1 FROM GIOHANG WHERE MaKH = @p0 AND MaSanPham = @p1 AND MaTap = @p3)
+                        UPDATE GIOHANG SET SoLuong = @p2 WHERE MaKH = @p0 AND MaSanPham = @p1 AND MaTap = @p3
                     ELSE
-                        INSERT INTO GIOHANG (MaKH, MaSanPham, SoLuong) VALUES (@p0, @p1, @p2)",
-                    customer.MaKH, productId, cartItem.Number);
+                        INSERT INTO GIOHANG (MaKH, MaSanPham, SoLuong, MaTap) VALUES (@p0, @p1, @p2, @p3)",
+                    customer.MaKH, productId, cartItem.Number, volumeId ?? 0);
             }
 
             return RedirectToAction("GetCartInfo");
@@ -232,10 +246,10 @@ namespace BookStoreOnline.Controllers
         }
 
         // Remove a product from the cart
-        public ActionResult Remove(int id)
+        public ActionResult Remove(int id, int? volumeId = null)
         {
             var cart = GetCart();
-            var cartItem = cart.FirstOrDefault(p => p.ProductID == id);
+            var cartItem = cart.FirstOrDefault(p => p.ProductID == id && p.VolumeID == volumeId);
             if (cartItem != null)
             {
                 cart.Remove(cartItem);
@@ -246,8 +260,8 @@ namespace BookStoreOnline.Controllers
                 if (customer != null)
                 {
                     db.Database.ExecuteSqlCommand(
-                        "DELETE FROM GIOHANG WHERE MaKH = @p0 AND MaSanPham = @p1",
-                        customer.MaKH, id);
+                        "DELETE FROM GIOHANG WHERE MaKH = @p0 AND MaSanPham = @p1 AND MaTap = @p2",
+                        customer.MaKH, id, volumeId ?? 0);
                 }
             }
             return RedirectToAction("GetCartInfo");
@@ -284,7 +298,7 @@ namespace BookStoreOnline.Controllers
 
         // Update the quantity of a product in the cart
         [HttpPost]
-        public ActionResult Update(int productId, int quantity)
+        public ActionResult Update(int productId, int quantity, int? volumeId = null)
         {
             // Kiểm tra nếu số lượng không hợp lệ
             if (quantity <= 0)
@@ -299,15 +313,22 @@ namespace BookStoreOnline.Controllers
                 return Json(new { success = false, message = "Product not found." }, JsonRequestBehavior.AllowGet);
             }
 
+            // Temporary workaround for maxQty since we can't compile Volume entity yet without edmx update
+            int maxQty = product.SoLuong;
+            if (volumeId.HasValue)
+            {
+                maxQty = db.Database.SqlQuery<int>("SELECT SoLuong FROM TAP_SANPHAM WHERE MaTap = @p0", volumeId.Value).FirstOrDefault();
+            }
+
             // Kiểm tra nếu số lượng yêu cầu lớn hơn số lượng tồn kho
-            if (quantity > product.SoLuong)
+            if (quantity > maxQty)
             {
                 return Json(new { success = false, message = "Quá số lượng tồn trong kho", validQuantity = 1 }, JsonRequestBehavior.AllowGet);
             }
 
             // Lấy giỏ hàng từ session
             var cart = GetCart();
-            var cartItem = cart.FirstOrDefault(item => item.ProductID == productId);
+            var cartItem = cart.FirstOrDefault(item => item.ProductID == productId && item.VolumeID == volumeId);
 
             if (cartItem != null)
             {
@@ -320,8 +341,8 @@ namespace BookStoreOnline.Controllers
                 if (customer != null)
                 {
                     db.Database.ExecuteSqlCommand(
-                        "UPDATE GIOHANG SET SoLuong = @p0 WHERE MaKH = @p1 AND MaSanPham = @p2",
-                        quantity, customer.MaKH, productId);
+                        "UPDATE GIOHANG SET SoLuong = @p0 WHERE MaKH = @p1 AND MaSanPham = @p2 AND MaTap = @p3",
+                        quantity, customer.MaKH, productId, volumeId ?? 0);
                 }
 
                 return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -345,7 +366,7 @@ namespace BookStoreOnline.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult CheckStock(int productId, int quantity)
+        public ActionResult CheckStock(int productId, int quantity, int? volumeId = null)
         {
             var product = db.SANPHAMs.Find(productId);
             if (product == null)
@@ -353,7 +374,13 @@ namespace BookStoreOnline.Controllers
                 return Json(new { success = false, message = "Product not found." });
             }
 
-            if (quantity > product.SoLuong)
+            int maxQty = product.SoLuong;
+            if (volumeId.HasValue)
+            {
+                maxQty = db.Database.SqlQuery<int>("SELECT SoLuong FROM TAP_SANPHAM WHERE MaTap = @p0", volumeId.Value).FirstOrDefault();
+            }
+
+            if (quantity > maxQty)
             {
                 return Json(new { success = false, message = "Quá số lượng tồn trong kho" });
             }
@@ -432,10 +459,24 @@ namespace BookStoreOnline.Controllers
                             SoLuong = item.Number
                         };
                         db.CHITIETDONHANGs.Add(orderDetail);
+                        db.SaveChanges(); // Lấy ID vừa được tạo
 
-                        product.SoLuong -= item.Number;
-                        product.SoLuongBan += item.Number;
-                        db.Entry(product).State = EntityState.Modified;
+                        if (item.VolumeID.HasValue)
+                        {
+                            db.Database.ExecuteSqlCommand("UPDATE CHITIETDONHANG SET MaTap = @p0 WHERE ID = @p1", item.VolumeID.Value, orderDetail.ID);
+                        }
+
+                        if (item.VolumeID.HasValue)
+                        {
+                            db.Database.ExecuteSqlCommand("UPDATE TAP_SANPHAM SET SoLuong = SoLuong - @p0 WHERE MaTap = @p1", item.Number, item.VolumeID.Value);
+                        }
+                        else
+                        {
+                            product.SoLuong -= item.Number;
+                            product.SoLuongBan += item.Number;
+                            db.Entry(product).State = EntityState.Modified;
+                        }
+
                     }
 
                     db.SaveChanges();
@@ -534,10 +575,23 @@ namespace BookStoreOnline.Controllers
                             SoLuong = item.Number
                         };
                         db.CHITIETDONHANGs.Add(orderDetail);
+                        db.SaveChanges(); // Lấy ID vừa được tạo
 
-                        product.SoLuong -= item.Number;
-                        product.SoLuongBan += item.Number;
-                        db.Entry(product).State = EntityState.Modified;
+                        if (item.VolumeID.HasValue)
+                        {
+                            db.Database.ExecuteSqlCommand("UPDATE CHITIETDONHANG SET MaTap = @p0 WHERE ID = @p1", item.VolumeID.Value, orderDetail.ID);
+                        }
+
+                        if (item.VolumeID.HasValue)
+                        {
+                            db.Database.ExecuteSqlCommand("UPDATE TAP_SANPHAM SET SoLuong = SoLuong - @p0 WHERE MaTap = @p1", item.Number, item.VolumeID.Value);
+                        }
+                        else
+                        {
+                            product.SoLuong -= item.Number;
+                            product.SoLuongBan += item.Number;
+                            db.Entry(product).State = EntityState.Modified;
+                        }
                     }
 
                     db.SaveChanges();

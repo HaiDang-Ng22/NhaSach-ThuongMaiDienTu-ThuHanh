@@ -255,7 +255,7 @@
                                             <div class="cart-product">
                                                 <img src="@item.ImagePro" alt="@item.NamePro">
                                                 <div>
-                                                    <h5 class="cart-product-title">@item.NamePro</h5>
+                                                    <h5 class="cart-product-title">@item.NamePro @(string.IsNullOrEmpty(item.VolumeName) ? "" : "- " + item.VolumeName)</h5>
                                                     <small class="text-muted">Mã SP: @item.ProductID</small>
                                                 </div>
                                             </div>
@@ -263,7 +263,7 @@
                                         <td>
                                             <div class="quantity-wrapper">
                                                 <button type="button" class="quantity-btn" data-action="decrease">-</button>
-                                                <input type="number" name="Quantity" value="@item.Number" min="1" data-product-id="@item.ProductID" class="quantity-input">
+                                                <input type="number" name="Quantity" value="@item.Number" min="1" data-product-id="@item.ProductID" data-volume-id="@item.VolumeID" class="quantity-input">
                                                 <button type="button" class="quantity-btn" data-action="increase">+</button>
                                                 <input type="hidden" name="ProductID" value="@item.ProductID" />
                                             </div>
@@ -273,7 +273,7 @@
                                             <input type="hidden" name="ProductID" value="@item.ProductID" />
                                         </td>
                                         <td class="text-right">
-                                            <a href="@Url.Action("Remove", "Cart", new { id = item.ProductID })" class="delete-prod-btn"><i class="bi bi-trash3-fill"></i></a>
+                                            <a href="@Url.Action("Remove", "Cart", new { id = item.ProductID, volumeId = item.VolumeID })" class="delete-prod-btn"><i class="bi bi-trash3-fill"></i></a>
                                         </td>
                                     </tr>
                                 }
@@ -391,13 +391,19 @@
 
         function updateQuantity(input, newQuantity) {
             var productId = input.dataset.productId;
+            var volumeId = input.dataset.volumeId;
             var priceCell = input.closest('tr').querySelector('.price-cell');
             var originalPrice = parseFloat(priceCell.dataset.price);
+
+            var bodyParams = `productId=${productId}&quantity=${newQuantity}`;
+            if (volumeId && volumeId !== '') {
+                bodyParams += `&volumeId=${volumeId}`;
+            }
 
             fetch('@Url.Action("Update", "Cart")', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `productId=${productId}&quantity=${newQuantity}`
+                body: bodyParams
             })
             .then(response => response.json())
             .then(data => {

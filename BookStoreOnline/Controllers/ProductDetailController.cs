@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using BookStoreOnline.Models;
@@ -31,6 +31,9 @@ namespace BookStoreOnline.Controllers
             ViewBag.Book = product;
             ViewBag.MoreBook = relatedProducts;
             ViewBag.User = Session["TaiKhoan"] as KHACHHANG;
+
+            ViewBag.Volumes = _db.Database.SqlQuery<VolumeDto>("SELECT MaTap, TenTap, SoLuong FROM TAP_SANPHAM WHERE MaSanPham = @p0", id).ToList();
+            ViewBag.Categories = _db.Database.SqlQuery<string>("SELECT l.TenLoai FROM SANPHAM_LOAI sl JOIN LOAI l ON sl.MaLoai = l.MaLoai WHERE sl.MaSanPham = @p0", id).ToList();
 
             return View(product);
         }

@@ -66,13 +66,14 @@ namespace BookStoreOnline.Areas.Admin.Controllers
         public ActionResult Create()
         {
             ViewBag.LoaiSP = new SelectList(db.LOAIs, "MaLoai", "TenLoai");
+            ViewBag.AllCategories = db.LOAIs.ToList();
             return View();
         }
 
         // POST: Admin/Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "MaSanPham,TenSanPham,Gia,MoTa,TacGia,Anh,MaLoai,SoLuong")] SANPHAM sanPham, HttpPostedFileBase imageBook)
+        public ActionResult Create([Bind(Include = "MaSanPham,TenSanPham,Gia,MoTa,TacGia,Anh,MaLoai,SoLuong")] SANPHAM sanPham, HttpPostedFileBase imageBook, List<int> SelectedCategories, List<string> VolumeNames, List<int> VolumeQuantities)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +83,7 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(imageBook.FileName, imageBook.InputStream),
-                        PublicId = "bookstore/" + Path.GetFileNameWithoutExtension(imageBook.FileName),
+                        PublicId = "bookstore/" + Guid.NewGuid().ToString(),
                         Overwrite = true
                     };
 
@@ -90,12 +91,42 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                     sanPham.Anh = uploadResult.SecureUrl.ToString(); // Lưu URL ảnh từ Cloudinary vào database
                 }
 
+                // Tính tổng số lượng từ các tập nếu có
+                if (VolumeQuantities != null && VolumeQuantities.Any())
+                {
+                    sanPham.SoLuong = VolumeQuantities.Sum();
+                }
+
                 db.SANPHAMs.Add(sanPham);
                 db.SaveChanges();
+
+                // Lưu danh sách thể loại
+                if (SelectedCategories != null)
+                {
+                    foreach (var catId in SelectedCategories)
+                    {
+                        db.Database.ExecuteSqlCommand("INSERT INTO SANPHAM_LOAI (MaSanPham, MaLoai) VALUES (@p0, @p1)", sanPham.MaSanPham, catId);
+                    }
+                }
+
+                // Lưu danh sách các tập sách
+                if (VolumeNames != null && VolumeQuantities != null)
+                {
+                    for (int i = 0; i < VolumeNames.Count; i++)
+                    {
+                        if (!string.IsNullOrWhiteSpace(VolumeNames[i]))
+                        {
+                            db.Database.ExecuteSqlCommand("INSERT INTO TAP_SANPHAM (MaSanPham, TenTap, SoLuong) VALUES (@p0, @p1, @p2)", 
+                                sanPham.MaSanPham, VolumeNames[i], VolumeQuantities[i]);
+                        }
+                    }
+                }
+
                 return RedirectToAction("Index");
             }
 
             ViewBag.LoaiSP = new SelectList(db.LOAIs, "MaLoai", "TenLoai", sanPham.MaLoai);
+            ViewBag.AllCategories = db.LOAIs.ToList();
             return View(sanPham);
         }
 
@@ -113,6 +144,12 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                 return HttpNotFound();
             }
 
+            var selectedCats = db.Database.SqlQuery<int>("SELECT MaLoai FROM SANPHAM_LOAI WHERE MaSanPham = @p0", id.Value).ToList();
+            ViewBag.SelectedCategories = selectedCats;
+            ViewBag.AllCategories = db.LOAIs.ToList();
+
+            ViewBag.Volumes = db.Database.SqlQuery<VolumeDto>("SELECT MaTap, TenTap, SoLuong FROM TAP_SANPHAM WHERE MaSanPham = @p0", id.Value).ToList();
+
             ViewBag.LoaiSP = new SelectList(db.LOAIs, "MaLoai", "TenLoai", sanPham.MaLoai);
             return View(sanPham);
         }
@@ -120,7 +157,7 @@ namespace BookStoreOnline.Areas.Admin.Controllers
         // POST: Admin/Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "MaSanPham,TenSanPham,Gia,MoTa,TacGia,Anh,MaLoai,SoLuong")] SANPHAM sanPham, HttpPostedFileBase imageBook)
+        public ActionResult Edit([Bind(Include = "MaSanPham,TenSanPham,Gia,MoTa,TacGia,Anh,MaLoai,SoLuong")] SANPHAM sanPham, HttpPostedFileBase imageBook, List<int> SelectedCategories, List<string> VolumeNames, List<int> VolumeQuantities, List<int> VolumeIds)
         {
             if (ModelState.IsValid)
             {
@@ -130,7 +167,7 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(imageBook.FileName, imageBook.InputStream),
-                        PublicId = "bookstore/" + Path.GetFileNameWithoutExtension(imageBook.FileName),
+                        PublicId = "bookstore/" + Guid.NewGuid().ToString(),
                         Overwrite = true
                     };
 
@@ -138,10 +175,57 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                     sanPham.Anh = uploadResult.SecureUrl.ToString(); // Cập nhật URL ảnh mới vào database
                 }
 
+                // Cập nhật thể loại
+                db.Database.ExecuteSqlCommand("DELETE FROM SANPHAM_LOAI WHERE MaSanPham = @p0", sanPham.MaSanPham);
+                if (SelectedCategories != null)
+                {
+                    foreach (var catId in SelectedCategories)
+                    {
+                        db.Database.ExecuteSqlCommand("INSERT INTO SANPHAM_LOAI (MaSanPham, MaLoai) VALUES (@p0, @p1)", sanPham.MaSanPham, catId);
+                    }
+                }
+
+                // Cập nhật tập sách
+                // Xóa các tập cũ (nếu không có trong danh sách update)
+                // Vì đơn giản, ta xoá hết rỗng giỏ hàng và chèn lại, nhưng xoá tập sách sẽ lỗi FK giỏ hàng nếu đã có người mua.
+                // Do đó, chỉ update tập cũ và insert tập mới.
+                if (VolumeNames != null && VolumeQuantities != null)
+                {
+                    for (int i = 0; i < VolumeNames.Count; i++)
+                    {
+                        if (!string.IsNullOrWhiteSpace(VolumeNames[i]))
+                        {
+                            if (VolumeIds != null && i < VolumeIds.Count && VolumeIds[i] > 0)
+                            {
+                                // Cập nhật tập hiện có
+                                db.Database.ExecuteSqlCommand("UPDATE TAP_SANPHAM SET TenTap=@p0, SoLuong=@p1 WHERE MaTap=@p2",
+                                    VolumeNames[i], VolumeQuantities[i], VolumeIds[i]);
+                            }
+                            else
+                            {
+                                // Thêm tập mới
+                                db.Database.ExecuteSqlCommand("INSERT INTO TAP_SANPHAM (MaSanPham, TenTap, SoLuong) VALUES (@p0, @p1, @p2)",
+                                    sanPham.MaSanPham, VolumeNames[i], VolumeQuantities[i]);
+                            }
+                        }
+                    }
+                }
+
+                // Update tổng số lượng
+                int totalVolQty = db.Database.SqlQuery<int>("SELECT ISNULL(SUM(SoLuong), 0) FROM TAP_SANPHAM WHERE MaSanPham = @p0", sanPham.MaSanPham).FirstOrDefault();
+                if (totalVolQty > 0) {
+                    sanPham.SoLuong = totalVolQty;
+                }
+
                 db.Entry(sanPham).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            var selectedCats = db.Database.SqlQuery<int>("SELECT MaLoai FROM SANPHAM_LOAI WHERE MaSanPham = @p0", sanPham.MaSanPham).ToList();
+            ViewBag.SelectedCategories = selectedCats;
+            ViewBag.AllCategories = db.LOAIs.ToList();
+            ViewBag.Volumes = db.Database.SqlQuery<VolumeDto>("SELECT MaTap, TenTap, SoLuong FROM TAP_SANPHAM WHERE MaSanPham = @p0", sanPham.MaSanPham).ToList();
 
             ViewBag.LoaiSP = new SelectList(db.LOAIs, "MaLoai", "TenLoai", sanPham.MaLoai);
             return View(sanPham);
@@ -178,6 +262,10 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                     var deletionParams = new DeletionParams("bookstore/" + publicId);
                     cloudinary.Destroy(deletionParams);
                 }
+
+                // Xóa các tập và thể loại liên quan trước khi xóa sản phẩm
+                db.Database.ExecuteSqlCommand("DELETE FROM TAP_SANPHAM WHERE MaSanPham = @p0", sanPham.MaSanPham);
+                db.Database.ExecuteSqlCommand("DELETE FROM SANPHAM_LOAI WHERE MaSanPham = @p0", sanPham.MaSanPham);
 
                 db.SANPHAMs.Remove(sanPham);
                 db.SaveChanges();
@@ -231,7 +319,7 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(imageBook.FileName, imageBook.InputStream),
-                        PublicId = "bookstore/" + Path.GetFileNameWithoutExtension(imageBook.FileName),
+                        PublicId = "bookstore/" + Guid.NewGuid().ToString(),
                         Overwrite = true
                     };
                     var uploadResult = cloudinary.Upload(uploadParams);

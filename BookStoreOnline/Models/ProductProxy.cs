@@ -1,4 +1,4 @@
-﻿using BookStoreOnline.Models;
+using BookStoreOnline.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -44,5 +44,12 @@ namespace BookStoreOnline.Models
             }
             return _cachedRelatedProducts;
         }
+    }
+
+    public class VolumeDto
+    {
+        public int MaTap { get; set; }
+        public string TenTap { get; set; }
+        public int SoLuong { get; set; }
     }
 }
