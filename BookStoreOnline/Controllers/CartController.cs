@@ -42,7 +42,7 @@ namespace BookStoreOnline.Controllers
                         var productInDb = dbContext.SANPHAMs.Find(item.ProductID);
                         int maxQty = productInDb?.SoLuong ?? 999;
                         int newQty = Math.Min(existingDbItem.SoLuong + item.Number, maxQty);
-                        
+
                         dbContext.Database.ExecuteSqlCommand(
                             "UPDATE GIOHANG SET SoLuong = @p0 WHERE MaKH = @p1 AND MaSanPham = @p2",
                             newQty, customerId, item.ProductID);
@@ -130,7 +130,7 @@ namespace BookStoreOnline.Controllers
             }
 
             var cartItem = cart.FirstOrDefault(p => p.ProductID == productId && p.VolumeID == volumeId);
-            
+
             // Temporary workaround for maxQty since we can't compile Volume entity yet without edmx update
             int maxQty = productInDb.SoLuong;
             if (volumeId.HasValue)
@@ -480,7 +480,7 @@ namespace BookStoreOnline.Controllers
                     }
 
                     db.SaveChanges();
-                    
+
                     // Clear database cart
                     if (customer != null)
                     {
@@ -719,7 +719,7 @@ namespace BookStoreOnline.Controllers
             };
             return this.payment.Execute(apiContext, paymentExecution);
         }
-      
+
         private Payment CreatePayment(APIContext apiContext, string redirectUrl)
         {
             List<CartItem> listSanPham = Session["GioHang"] as List<CartItem>;
@@ -788,7 +788,7 @@ namespace BookStoreOnline.Controllers
         }
         public async Task<ActionResult> momo(int id)
         {
-           
+
             var checkid = db.DONHANGs.Where(s => s.MaDonHang == id).FirstOrDefault();
             var tongtien = checkid.TongTien;
             var paymentService = new PaymentService();
@@ -803,15 +803,114 @@ namespace BookStoreOnline.Controllers
             }
             return Redirect(paymentUrl);
         }
-       public ActionResult callback(int id)
-       {
-            var checkid = db.DONHANGs.Where(s=> s.MaDonHang == id).FirstOrDefault();
-            if(checkid == null)
+        public ActionResult callback(int id)
+        {
+            var checkid = db.DONHANGs.Where(s => s.MaDonHang == id).FirstOrDefault();
+            if (checkid == null)
             {
                 return HttpNotFound();
             }
             // Add momo validation logic here if needed
-            return RedirectToAction("Index","Order");
-       }
+            return RedirectToAction("Index", "Order");
+        }
+
+        [HttpPost]
+        public ActionResult InsertOrderVietQR(string address, string paymentMethod1)
+        {
+            var cartItems = GetCart();
+            if (cartItems == null || !cartItems.Any())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Empty cart.");
+            }
+
+            var customer = Session["TaiKhoan"] as KHACHHANG;
+            if (customer == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized, "Not logged in.");
+            }
+
+            var discountAmount = Session["DiscountAmount"] as decimal? ?? 0;
+            var finalPrice = Session["FinalPrice"] as decimal? ?? GetTotalPrice();
+            var roundedFinalPrice = (int)Math.Round(finalPrice);
+
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var order = new DONHANG
+                    {
+                        ID = customer.MaKH,
+                        NgayDat = DateTime.Now,
+                        DiaChi = address,
+                        TrangThai = 0, // 0: Đơn hàng mới chờ duyệt
+                        TrangThaiThanhToan = 0, // 0: CHƯA THANH TOÁN (Chờ bạn kiểm tra tài khoản ngân hàng rồi duyệt sau)
+                        PhuongThucThanhToan = 3, // 3: Định nghĩa riêng cho hình thức VietQR
+                        TongTien = roundedFinalPrice,
+                        MaKM = Session["MaKM"] as string
+                    };
+
+                    db.DONHANGs.Add(order);
+                    db.SaveChanges();
+
+                    foreach (var item in cartItems)
+                    {
+                        var product = db.SANPHAMs.Find(item.ProductID);
+                        if (product == null)
+                        {
+                            return HttpNotFound("Product not found.");
+                        }
+
+                        if (item.Number > product.SoLuong)
+                        {
+                            return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Quá số lượng tồn trong kho.");
+                        }
+
+                        var orderDetail = new CHITIETDONHANG
+                        {
+                            MaDonHang = order.MaDonHang,
+                            MaSanPham = item.ProductID,
+                            SoLuong = item.Number
+                        };
+                        db.CHITIETDONHANGs.Add(orderDetail);
+                        db.SaveChanges();
+
+                        if (item.VolumeID.HasValue)
+                        {
+                            db.Database.ExecuteSqlCommand("UPDATE CHITIETDONHANG SET MaTap = @p0 WHERE ID = @p1", item.VolumeID.Value, orderDetail.ID);
+                            db.Database.ExecuteSqlCommand("UPDATE TAP_SANPHAM SET SoLuong = SoLuong - @p0 WHERE MaTap = @p1", item.Number, item.VolumeID.Value);
+                        }
+                        else
+                        {
+                            product.SoLuong -= item.Number;
+                            product.SoLuongBan += item.Number;
+                            db.Entry(product).State = EntityState.Modified;
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    // Xóa sạch giỏ hàng trong Database sau khi đặt thành công
+                    if (customer != null)
+                    {
+                        db.Database.ExecuteSqlCommand("DELETE FROM GIOHANG WHERE MaKH = @p0", customer.MaKH);
+                    }
+
+                    Session["GioHang"] = null;
+                    Session["DiscountAmount"] = null;
+                    Session["FinalPrice"] = null;
+                    Session["MaKM"] = null;
+
+                    transaction.Commit();
+
+                    // Chuyển hướng về trang báo thành công
+                    return RedirectToAction("SuccessView");
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Order processing error: " + ex.Message);
+                }
+            }
+        }
     }
 }

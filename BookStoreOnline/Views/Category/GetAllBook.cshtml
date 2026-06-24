@@ -144,7 +144,12 @@
                                 <span class="rating-count">(@item.DANHGIAs.Count.ToString())</span>
                             </div>
 
-                            <p class="product-price">@String.Format(price, "{0:c0}", item.Gia)</p>
+                            <p class="product-price" style="display: flex; align-items: center; gap: 6px;">
+                                @String.Format(price, "{0:c0}", item.Gia)
+                                <span style="background-color: #ffeae9; color: #e8392a; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(232, 57, 42, 0.2); display: inline-block;">
+                                    -@(new Random(item.MaSanPham).Next(10, 35))%
+                                </span>
+                            </p>
 
                             <div class="sold-bar-wrap">
                                 <div class="sold-bar-fill" style="width: @roundedPercentageSold%; background-color: @progressBarColor;"></div>

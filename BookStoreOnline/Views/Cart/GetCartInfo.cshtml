@@ -14,6 +14,7 @@
     .cart-section {
         padding: 40px 15px;
     }
+
     .cart-title {
         font-size: 26px;
         font-weight: 800;
@@ -23,6 +24,7 @@
         align-items: center;
         gap: 10px;
     }
+
     .cart-card {
         background: #fff;
         border-radius: 20px;
@@ -31,39 +33,46 @@
         padding: 24px;
         margin-bottom: 30px;
     }
+
     .cart-table {
         width: 100%;
         border-collapse: collapse;
     }
-    .cart-table th {
-        font-weight: 700;
-        font-size: 13px;
-        text-transform: uppercase;
-        color: #4b5563;
-        letter-spacing: 0.5px;
-        padding: 12px 16px;
-        border-bottom: 1.5px solid #e5e7eb;
-    }
-    .cart-table td {
-        padding: 20px 16px;
-        vertical-align: middle;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    .cart-table tr:last-child td {
-        border-bottom: none;
-    }
+
+        .cart-table th {
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #4b5563;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            border-bottom: 1.5px solid #e5e7eb;
+        }
+
+        .cart-table td {
+            padding: 20px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .cart-table tr:last-child td {
+            border-bottom: none;
+        }
+
     .cart-product {
         display: flex;
         align-items: center;
         gap: 16px;
     }
-    .cart-product img {
-        width: 64px;
-        height: 80px;
-        object-fit: contain;
-        border-radius: 6px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-    }
+
+        .cart-product img {
+            width: 64px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+
     .cart-product-title {
         font-size: 15px;
         font-weight: 700;
@@ -71,6 +80,7 @@
         margin: 0 0 4px 0;
         line-height: 1.4;
     }
+
     .quantity-wrapper {
         display: inline-flex;
         align-items: center;
@@ -80,6 +90,7 @@
         height: 38px;
         background: #fff;
     }
+
     .quantity-btn {
         background: none;
         border: none;
@@ -93,9 +104,11 @@
         align-items: center;
         justify-content: center;
     }
-    .quantity-btn:hover {
-        background: #f1f5f9;
-    }
+
+        .quantity-btn:hover {
+            background: #f1f5f9;
+        }
+
     .quantity-input {
         border: none;
         width: 44px;
@@ -105,20 +118,23 @@
         outline: none;
         font-size: 14px;
     }
+
     .price-cell {
         font-size: 16px;
         font-weight: 800;
         color: #e8392a;
         margin: 0;
     }
+
     .delete-prod-btn {
         color: #9ca3af;
         font-size: 20px;
         transition: color 0.2s;
     }
-    .delete-prod-btn:hover {
-        color: #dc2626;
-    }
+
+        .delete-prod-btn:hover {
+            color: #dc2626;
+        }
     /* Summary Card */
     .summary-card {
         background: #fff;
@@ -129,6 +145,7 @@
         position: sticky;
         top: 90px;
     }
+
     .summary-title {
         font-size: 18px;
         font-weight: 800;
@@ -137,53 +154,62 @@
         border-bottom: 1.5px solid #f1f5f9;
         padding-bottom: 12px;
     }
+
     .summary-group {
         margin-bottom: 18px;
     }
-    .summary-group label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 8px;
-    }
-    .summary-group textarea,
-    .summary-group select,
-    .summary-group input[type="text"] {
-        width: 100%;
-        border-radius: 10px;
-        border: 1.5px solid #d1d5db;
-        padding: 10px 14px;
-        font-size: 14px;
-        outline: none;
-        transition: border-color 0.2s;
-        background: #f9fafb;
-    }
-    .summary-group textarea:focus,
-    .summary-group select:focus,
-    .summary-group input[type="text"]:focus {
-        border-color: #e8392a;
-        background: #fff;
-    }
+
+        .summary-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .summary-group textarea,
+        .summary-group select,
+        .summary-group input[type="text"] {
+            width: 100%;
+            border-radius: 10px;
+            border: 1.5px solid #d1d5db;
+            padding: 10px 14px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f9fafb;
+        }
+
+            .summary-group textarea:focus,
+            .summary-group select:focus,
+            .summary-group input[type="text"]:focus {
+                border-color: #e8392a;
+                background: #fff;
+            }
+
     .summary-table {
         width: 100%;
         margin: 20px 0;
     }
-    .summary-table td {
-        padding: 8px 0;
-        font-size: 14.5px;
-        color: #4b5563;
-    }
-    .summary-table tr:last-child td {
-        border-top: 1.5px solid #f1f5f9;
-        padding-top: 14px;
-    }
+
+        .summary-table td {
+            padding: 8px 0;
+            font-size: 14.5px;
+            color: #4b5563;
+        }
+
+        .summary-table tr:last-child td {
+            border-top: 1.5px solid #f1f5f9;
+            padding-top: 14px;
+        }
+
     .total-price-text {
         font-size: 22px;
         font-weight: 800;
         color: #e8392a;
         margin: 0;
     }
+
     .btn-checkout {
         width: 100%;
         height: 48px;
@@ -201,10 +227,12 @@
         justify-content: center;
         gap: 8px;
     }
-    .btn-checkout:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(232,57,42,0.32);
-    }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(232,57,42,0.32);
+        }
+
     .discount-badge-box {
         display: flex;
         justify-content: space-between;
@@ -215,11 +243,13 @@
         border: 1px dashed rgba(232,57,42,0.3);
         margin-top: 10px;
     }
-    .discount-badge-box span {
-        font-size: 13px;
-        font-weight: 700;
-        color: #e8392a;
-    }
+
+        .discount-badge-box span {
+            font-size: 13px;
+            font-weight: 700;
+            color: #e8392a;
+        }
+
     #discount-amount {
         font-size: 14px;
         font-weight: 700;
@@ -231,7 +261,7 @@
 <div class="container cart-section">
     <h2 class="cart-title"><i class="bi bi-cart3"></i> Giỏ Hàng Của Bạn</h2>
 
-    @using (Html.BeginForm("InsertOrder", "Cart", FormMethod.Post, new { @class = "checkout-form" }))
+    @using (Html.BeginForm("InsertOrder", "Cart", FormMethod.Post, new { id = "checkoutForm", @class = "checkout-form" }))
     {
         <div class="row">
             <!-- Left Column: Products -->
@@ -320,7 +350,7 @@
                         <select id="paymentMethod1" name="paymentMethod1" class="form-control" required>
                             <option value="">-- Chọn phương thức thanh toán --</option>
                             <option value="cod">Thanh toán khi nhận hàng (COD)</option>
-                            <option value="paypal">Thanh toán bằng PayPal</option>
+                            <option value="paypal">Thanh toán bằng tài khoản ngân hàng</option>
                             <option value="momo">Thanh toán bằng MoMo</option>
                         </select>
                     </div>
@@ -354,8 +384,67 @@
         </div>
     }
 </div>
+<div id="vietqrModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #ffffff; padding: 28px; border-radius: 20px; width: 390px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; animation: zoomInModal 0.3s ease-in-out; box-sizing: border-box;">
 
-<script>
+        <button type="button" onclick="closeVietqrModal()" style="position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; font-weight: bold; padding: 0; line-height: 1;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'">&times;</button>
+
+        <div id="step-input-stk" style="display: block;">
+            <h3 style="margin-top: 10px; color: #0f172a; font-size: 19px; font-weight: 800; margin-bottom: 8px;">Thông Tin Tài Khoản Đối Soát</h3>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 22px; line-height: 1.5;">Vui lòng nhập Số tài khoản ngân hàng của bạn để hệ thống ghi nhận đối soát khi kế toán kiểm tra lịch sử số dư đơn hàng.</p>
+
+            <div style="text-align: left; margin-bottom: 22px;">
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px;">Số tài khoản của bạn *</label>
+                <input type="text" id="customerSTK" placeholder="Nhập số tài khoản của bạn..." style="width: 100%; border-radius: 10px; border: 1.5px solid #d1d5db; padding: 12px 14px; font-size: 14px; outline: none; box-sizing: border-box;" />
+                <span id="stkError" style="color: #ef4444; font-size: 12px; display: none; margin-top: 6px; font-weight: 600;">Vui lòng nhập đầy đủ thông tin!</span>
+            </div>
+
+            <button type="button" onclick="goToQRStep()" style="width: 100%; background: linear-gradient(135deg, #005baa, #0072ce); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 91, 170, 0.3);">
+                Tiếp tục thanh toán
+            </button>
+        </div>
+
+        <div id="step-show-qr" style="display: none;">
+            <h3 style="margin-top: 10px; color: #005baa; font-size: 21px; font-weight: 800; margin-bottom: 6px;">Thanh Toán Đơn Hàng</h3>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">Vui lòng mở ứng dụng Ngân hàng quét mã VietQR</p>
+
+            <div style="border: 2px dashed #005baa; padding: 12px; border-radius: 16px; display: inline-block; background: #f8fafc; margin-bottom: 18px;">
+                <img id="dynamicVietQR" src="" alt="Đang tải mã VietQR..." style="width: 240px; height: 240px; display: block; border-radius: 12px;" />
+            </div>
+
+            <div style="background: #f1f5f9; padding: 14px; border-radius: 12px; text-align: left; margin-bottom: 22px; font-size: 13.5px; color: #334155; line-height: 1.6;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="color: #64748b;">Số tiền:</span>
+                    <strong id="modalTotalAmount" style="color: #ef4444; font-size: 16px; font-weight: 800;">0 đ</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #64748b;">Nội dung:</span>
+                    <strong style="color: #0f172a;">THANH TOAN DON HANG</strong>
+                </div>
+            </div>
+
+            <button type="button" onclick="submitFormAfterPayment()" style="width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.3);">
+                Tôi đã chuyển khoản thành công
+            </button>
+        </div>
+
+    </div>
+</div>
+    <style>
+        @@keyframes zoomInModal {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+
+    <script>
     document.addEventListener("DOMContentLoaded", function () {
         var priceFormat = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 
@@ -475,92 +564,165 @@
                 console.error('Có lỗi xảy ra khi áp dụng mã giảm giá:', error);
             });
         });
-    });
-</script>
+        var formElement = document.getElementById("checkoutForm");
+        if (formElement) {
+            formElement.addEventListener("submit", function (event) {
+                var selectedMethod = document.getElementById("paymentMethod1").value;
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const apiHost = "https://provinces.open-api.vn/api/";
+                if (selectedMethod === "paypal") {
+                    event.preventDefault();
 
-        // 1. Tự động tải danh sách Tỉnh / Thành phố từ API khi load trang
-        fetch(apiHost + "?depth=1")
-            .then(res => res.json())
-            .then(data => {
-                const pSelect = document.getElementById("province");
-                if (pSelect) {
-                    data.forEach(item => {
-                        pSelect.innerHTML += `<option value="${item.code}">${item.name}</option>`;
-                    });
+                    document.getElementById("step-input-stk").style.display = "block";
+                    document.getElementById("step-show-qr").style.display = "none";
+                    document.getElementById("customerSTK").value = "";
+                    document.getElementById("stkError").style.display = "none";
+
+                    var currentTotal = totalPriceElement.textContent;
+                    document.getElementById("modalTotalAmount").innerText = currentTotal;
+                    document.getElementById("vietqrModal").style.display = "flex";
                 }
-            }).catch(err => console.error("Lỗi kết nối API tỉnh thành:", err));
-
-        // 2. Khi người dùng chọn Tỉnh -> Tự động load danh sách Quận / Huyện tương ứng
-        document.getElementById("province").addEventListener("change", function () {
-            const pCode = this.value;
-            const dSelect = document.getElementById("district");
-            const wSelect = document.getElementById("ward");
-
-            dSelect.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
-            dSelect.disabled = true;
-            wSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
-            wSelect.disabled = true;
-
-            if (pCode) {
-                fetch(`${apiHost}p/${pCode}?depth=2`)
-                    .then(res => res.json())
-                    .then(data => {
-                        dSelect.disabled = false;
-                        data.districts.forEach(item => {
-                            dSelect.innerHTML += `<option value="${item.code}">${item.name}</option>`;
-                        });
-                    });
-            }
-            gopDiaChiFull();
-        });
-
-        // 3. Khi người dùng chọn Quận -> Tự động load danh sách Phường / Xã tương ứng
-        document.getElementById("district").addEventListener("change", function () {
-            const dCode = this.value;
-            const wSelect = document.getElementById("ward");
-
-            wSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
-            wSelect.disabled = true;
-
-            if (dCode) {
-                fetch(`${apiHost}d/${dCode}?depth=2`)
-                    .then(res => res.json())
-                    .then(data => {
-                        wSelect.disabled = false;
-                        data.wards.forEach(item => {
-                            wSelect.innerHTML += `<option value="${item.code}">${item.name}</option>`;
-                        });
-                    });
-            }
-            gopDiaChiFull();
-        });
-
-        // 4. Lắng nghe sự kiện khi chọn Phường hoặc gõ Số nhà để gộp chuỗi địa chỉ
-        document.getElementById("ward").addEventListener("change", gopDiaChiFull);
-        document.getElementById("streetAddress").addEventListener("input", gopDiaChiFull);
-
-        // Hàm tự động gộp chuỗi thành: "Số nhà, Phường ..., Quận ..., Tỉnh ..." để ném vào Database
-        function gopDiaChiFull() {
-            const pSelect = document.getElementById("province");
-            const dSelect = document.getElementById("district");
-            const wSelect = document.getElementById("ward");
-            const streetInput = document.getElementById("streetAddress");
-
-            const pText = pSelect.selectedIndex > 0 ? pSelect.options[pSelect.selectedIndex].text : "";
-            const dText = dSelect.selectedIndex > 0 ? dSelect.options[dSelect.selectedIndex].text : "";
-            const wText = wSelect.selectedIndex > 0 ? wSelect.options[wSelect.selectedIndex].text : "";
-            const street = streetInput ? streetInput.value.trim() : "";
-
-            // Nếu điền đầy đủ cả 4 trường thì mới gộp chuỗi hoàn chỉnh để lưu
-            if (pText && dText && wText && street) {
-                document.getElementById("address").value = `${street}, ${wText}, ${dText}, ${pText}`;
-            } else {
-                document.getElementById("address").value = "";
-            }
+            });
         }
+
+        window.goToQRStep = function () {
+            var stkValue = document.getElementById("customerSTK").value.trim();
+            var errorSpan = document.getElementById("stkError");
+
+            var stkPattern = /^[0-9]{9,15}$/;
+
+            if (!stkValue) {
+                errorSpan.innerText = "Vui lòng nhập số tài khoản ngân hàng của bạn!";
+                errorSpan.style.display = "block";
+                return;
+            }
+            if (!stkPattern.test(stkValue)) {
+                errorSpan.innerText = "Số tài khoản không hợp lệ! (Phải là dãy số từ 9 đến 15 chữ số)";
+                errorSpan.style.display = "block";
+                return;
+            }
+
+            errorSpan.style.display = "none";
+
+            if (typeof totalPriceElement !== 'undefined' && totalPriceElement) {
+                document.getElementById("modalTotalAmount").innerText = totalPriceElement.textContent;
+            }
+
+            var myBankCode = "TCB";
+            var mySTK = "3038384869";
+            var myAccountName = "BANG KHAI TAN";
+
+            var rawAmount = totalPriceElement.textContent.replace(/[^\d]/g, '');
+            var orderMemo = "THANH TOAN DON HANG";
+
+            var qrUrl = `https://img.vietqr.io/image/${myBankCode}-${mySTK}-compact2.png?amount=${rawAmount}&addInfo=${encodeURIComponent(orderMemo)}&accountName=${encodeURIComponent(myAccountName)}`;
+
+            var qrImg = document.getElementById("dynamicVietQR");
+            if (qrImg) {
+                qrImg.src = qrUrl;
+            }
+
+            document.getElementById("step-input-stk").style.display = "none";
+            document.getElementById("step-show-qr").style.display = "block";
+        };
+
+        window.closeVietqrModal = function () {
+            document.getElementById("vietqrModal").style.display = "none";
+        };
+
+        window.submitFormAfterPayment = function () {
+            document.getElementById("vietqrModal").style.display = "none";
+            var finalForm = document.getElementById("checkoutForm");
+            if (finalForm) {
+                finalForm.action = '@Url.Action("InsertOrderVietQR", "Cart")';
+                finalForm.submit(); // Đẩy đơn lên Backend lưu db
+            }
+        };
     });
-</script>
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const apiHost = "https://provinces.open-api.vn/api/";
+
+            // 1. Tự động tải danh sách Tỉnh / Thành phố từ API khi load trang
+            fetch(apiHost + "?depth=1")
+                .then(res => res.json())
+                .then(data => {
+                    const pSelect = document.getElementById("province");
+                    if (pSelect) {
+                        data.forEach(item => {
+                            pSelect.innerHTML += `<option value="${item.code}">${item.name}</option>`;
+                        });
+                    }
+                }).catch(err => console.error("Lỗi kết nối API tỉnh thành:", err));
+
+            // 2. Khi người dùng chọn Tỉnh -> Tự động load danh sách Quận / Huyện tương ứng
+            document.getElementById("province").addEventListener("change", function () {
+                const pCode = this.value;
+                const dSelect = document.getElementById("district");
+                const wSelect = document.getElementById("ward");
+
+                dSelect.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
+                dSelect.disabled = true;
+                wSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+                wSelect.disabled = true;
+
+                if (pCode) {
+                    fetch(`${apiHost}p/${pCode}?depth=2`)
+                        .then(res => res.json())
+                        .then(data => {
+                            dSelect.disabled = false;
+                            data.districts.forEach(item => {
+                                dSelect.innerHTML += `<option value="${item.code}">${item.name}</option>`;
+                            });
+                        });
+                }
+                gopDiaChiFull();
+            });
+
+            // 3. Khi người dùng chọn Quận -> Tự động load danh sách Phường / Xã tương ứng
+            document.getElementById("district").addEventListener("change", function () {
+                const dCode = this.value;
+                const wSelect = document.getElementById("ward");
+
+                wSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
+                wSelect.disabled = true;
+
+                if (dCode) {
+                    fetch(`${apiHost}d/${dCode}?depth=2`)
+                        .then(res => res.json())
+                        .then(data => {
+                            wSelect.disabled = false;
+                            data.wards.forEach(item => {
+                                wSelect.innerHTML += `<option value="${item.code}">${item.name}</option>`;
+                            });
+                        });
+                }
+                gopDiaChiFull();
+            });
+
+            // 4. Lắng nghe sự kiện khi chọn Phường hoặc gõ Số nhà để gộp chuỗi địa chỉ
+            document.getElementById("ward").addEventListener("change", gopDiaChiFull);
+            document.getElementById("streetAddress").addEventListener("input", gopDiaChiFull);
+
+            // Hàm tự động gộp chuỗi thành: "Số nhà, Phường ..., Quận ..., Tỉnh ..." để ném vào Database
+            function gopDiaChiFull() {
+                const pSelect = document.getElementById("province");
+                const dSelect = document.getElementById("district");
+                const wSelect = document.getElementById("ward");
+                const streetInput = document.getElementById("streetAddress");
+
+                const pText = pSelect.selectedIndex > 0 ? pSelect.options[pSelect.selectedIndex].text : "";
+                const dText = dSelect.selectedIndex > 0 ? dSelect.options[dSelect.selectedIndex].text : "";
+                const wText = wSelect.selectedIndex > 0 ? wSelect.options[wSelect.selectedIndex].text : "";
+                const street = streetInput ? streetInput.value.trim() : "";
+
+                // Nếu điền đầy đủ cả 4 trường thì mới gộp chuỗi hoàn chỉnh để lưu
+                if (pText && dText && wText && street) {
+                    document.getElementById("address").value = `${street}, ${wText}, ${dText}, ${pText}`;
+                } else {
+                    document.getElementById("address").value = "";
+                }
+            }
+        });
+    </script>
