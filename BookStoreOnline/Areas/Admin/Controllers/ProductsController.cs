@@ -59,6 +59,14 @@ namespace BookStoreOnline.Areas.Admin.Controllers
             {
                 return HttpNotFound();
             }
+
+            ViewBag.Categories = db.Database.SqlQuery<string>(
+                "SELECT l.TenLoai FROM SANPHAM_LOAI sl JOIN LOAI l ON sl.MaLoai = l.MaLoai WHERE sl.MaSanPham = @p0", 
+                id.Value).ToList();
+            ViewBag.Volumes = db.Database.SqlQuery<VolumeDto>(
+                "SELECT MaTap, TenTap, SoLuong FROM TAP_SANPHAM WHERE MaSanPham = @p0", 
+                id.Value).ToList();
+
             return View(sanPham);
         }
 
@@ -186,9 +194,22 @@ namespace BookStoreOnline.Areas.Admin.Controllers
                 }
 
                 // Cập nhật tập sách
-                // Xóa các tập cũ (nếu không có trong danh sách update)
-                // Vì đơn giản, ta xoá hết rỗng giỏ hàng và chèn lại, nhưng xoá tập sách sẽ lỗi FK giỏ hàng nếu đã có người mua.
-                // Do đó, chỉ update tập cũ và insert tập mới.
+                // Lấy danh sách các MaTap hiện tại trong DB của sản phẩm này
+                var currentDbVolumeIds = db.Database.SqlQuery<int>("SELECT MaTap FROM TAP_SANPHAM WHERE MaSanPham = @p0", sanPham.MaSanPham).ToList();
+
+                // Xác định các MaTap cần xoá (có trong DB nhưng không có trong form gửi lên)
+                var submittedVolumeIds = VolumeIds != null ? VolumeIds.Where(id => id > 0).ToList() : new List<int>();
+                var volumeIdsToDelete = currentDbVolumeIds.Except(submittedVolumeIds).ToList();
+
+                // Thực hiện xoá các tập không còn trong form
+                if (volumeIdsToDelete.Any())
+                {
+                    foreach (var delId in volumeIdsToDelete)
+                    {
+                        db.Database.ExecuteSqlCommand("DELETE FROM TAP_SANPHAM WHERE MaTap = @p0", delId);
+                    }
+                }
+
                 if (VolumeNames != null && VolumeQuantities != null)
                 {
                     for (int i = 0; i < VolumeNames.Count; i++)
@@ -213,9 +234,7 @@ namespace BookStoreOnline.Areas.Admin.Controllers
 
                 // Update tổng số lượng
                 int totalVolQty = db.Database.SqlQuery<int>("SELECT ISNULL(SUM(SoLuong), 0) FROM TAP_SANPHAM WHERE MaSanPham = @p0", sanPham.MaSanPham).FirstOrDefault();
-                if (totalVolQty > 0) {
-                    sanPham.SoLuong = totalVolQty;
-                }
+                sanPham.SoLuong = totalVolQty;
 
                 db.Entry(sanPham).State = EntityState.Modified;
                 db.SaveChanges();

@@ -1,68 +1,208 @@
-﻿@model BookStoreOnline.Models.SANPHAM
+@model BookStoreOnline.Models.SANPHAM
 
 @{
-    ViewBag.Title = "Details";
-    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Chi Tiết Sách - " + Model.TenSanPham;
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h2>Details</h2>
+<style>
+    .detail-grid { display:grid; grid-template-columns:1fr 320px; gap:24px; align-items:start; }
+    .detail-card {
+        background:#fff; border-radius:16px;
+        border:1px solid #f1f5f9;
+        box-shadow:0 2px 12px rgba(0,0,0,0.04); overflow:hidden;
+    }
+    .detail-card-header { padding:20px 28px; border-bottom:1px solid #f1f5f9; }
+    .detail-card-header h2 { font-size:16px; font-weight:700; color:#0f172a; margin:0; }
+    .detail-card-body { padding:28px; }
+    
+    .detail-info-group { margin-bottom:20px; }
+    .detail-label { font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .detail-value { font-size:15px; color:#0f172a; font-weight:500; }
+    .detail-value.title { font-size:22px; font-weight:800; color:#0f172a; line-height:1.3; }
+    
+    .price-badge {
+        background:#fef0f0; color:#e8392a; font-weight:700;
+        border-radius:6px; padding:4px 10px; font-size:14px; display:inline-block;
+    }
+    .qty-badge {
+        background:#f0fdf4; color:#15803d; font-weight:700;
+        border-radius:6px; padding:4px 10px; font-size:14px; display:inline-block;
+    }
+    .category-tag {
+        background:#eff6ff; color:#1d4ed8; border-radius:6px;
+        padding:4px 10px; font-size:13px; font-weight:600; display:inline-block;
+    }
+    
+    .description-box {
+        background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px;
+        padding:16px; font-size:14px; color:#334155; line-height:1.6;
+        min-height:100px;
+    }
+    
+    .detail-img { width:100%; border-radius:12px; object-fit:cover; box-shadow:0 4px 15px rgba(0,0,0,0.08); max-height:400px; }
+    
+    .detail-actions { display:flex; align-items:center; gap:12px; margin-top:24px; padding-top:20px; border-top:1px solid #f1f5f9; }
+    .btn-back {
+        display:inline-flex; align-items:center; gap:6px;
+        background:#f1f5f9; color:#475569; border:none; border-radius:10px;
+        padding:11px 20px; font-size:14px; font-weight:600;
+        text-decoration:none; transition:all 0.2s; cursor:pointer;
+    }
+    .btn-back:hover { background:#e2e8f0; color:#0f172a; text-decoration:none; }
+    .btn-edit {
+        display:inline-flex; align-items:center; gap:6px;
+        background:linear-gradient(135deg,#e8392a,#ff6b5b); color:#fff;
+        border:none; border-radius:10px; padding:11px 24px;
+        font-size:14px; font-weight:600; text-decoration:none;
+        transition:all 0.2s; box-shadow:0 4px 12px rgba(232,57,42,0.3);
+    }
+    .btn-edit:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(232,57,42,0.4); color:#fff; text-decoration:none; }
+    
+    .form-page-header { display:flex; align-items:center; gap:12px; margin-bottom:28px; }
+    .form-page-header .back-btn {
+        width:36px; height:36px; border-radius:10px; background:#f1f5f9;
+        display:flex; align-items:center; justify-content:center;
+        text-decoration:none; color:#475569; transition:all 0.2s; font-size:16px;
+    }
+    .form-page-header .back-btn:hover { background:#e2e8f0; color:#0f172a; }
+    .form-page-title { font-size:20px; font-weight:800; color:#0f172a; }
+    .form-page-title span { color:#e8392a; }
 
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.TenSanPham)
-        </dt>
+    @@media (max-width:1024px) { .detail-grid { grid-template-columns:1fr; } }
+</style>
 
-        <dd>
-            @Html.DisplayFor(model => model.TenSanPham)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Gia)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Gia)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MoTa)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MoTa)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TacGia)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TacGia)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Anh)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Anh)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LOAI.Tenloai)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LOAI.Tenloai)
-        </dd>
-
-    </dl>
+<div class="form-page-header">
+    <a href="/Admin/Products" class="back-btn"><i class="bi bi-arrow-left"></i></a>
+    <div class="form-page-title">Chi Tiết <span>Sách</span></div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.MaSanPham }) |
-    @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-secondary", style = "color: white !important;" })
 
-</p>
+<div class="detail-grid">
+    <div class="detail-card">
+        <div class="detail-card-header">
+            <h2><i class="bi bi-info-circle-fill me-2" style="color:#e8392a"></i>Thông Tin Sách</h2>
+        </div>
+        <div class="detail-card-body">
+            <div class="detail-info-group">
+                <div class="detail-label">Tên Sách</div>
+                <div class="detail-value title">@Model.TenSanPham</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detail-info-group">
+                        <div class="detail-label">Tác Giả</div>
+                        <div class="detail-value">@Model.TacGia</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detail-info-group">
+                        <div class="detail-label">Thể Loại</div>
+                        <div class="detail-value">
+                            @{
+                                var categories = ViewBag.Categories as List<string>;
+                                if (categories != null && categories.Any())
+                                {
+                                    foreach (var cat in categories)
+                                    {
+                                        <span class="category-tag" style="margin-right: 4px; margin-bottom: 4px;">@cat</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa phân loại</span>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 10px;">
+                <div class="col-md-6">
+                    <div class="detail-info-group">
+                        <div class="detail-label">Giá Bán</div>
+                        <div class="detail-value">
+                            <span class="price-badge">@String.Format("{0:N0}đ", Model.Gia)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detail-info-group">
+                        <div class="detail-label">Số Lượng</div>
+                        <div class="detail-value">
+                            <span class="qty-badge">@Model.SoLuong</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-info-group" style="margin-top: 10px;">
+                <div class="detail-label">Mô Tả Sản Phẩm</div>
+                <div class="description-box">
+                    @if (!string.IsNullOrEmpty(Model.MoTa))
+                    {
+                        @Html.Raw(Model.MoTa)
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có mô tả cho sách này.</span>
+                    }
+                </div>
+            </div>
+
+            @{
+                var volumes = ViewBag.Volumes as List<BookStoreOnline.Models.VolumeDto>;
+                if (volumes != null && volumes.Any())
+                {
+                    <div class="detail-info-group" style="margin-top: 20px;">
+                        <div class="detail-label">Danh Sách Tập Sách</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            @foreach (var vol in volumes)
+                            {
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                                    <i class="bi bi-book-half" style="color: #e8392a;"></i>
+                                    <span>@vol.TenTap:</span>
+                                    <span class="qty-badge" style="padding: 2px 6px; font-size: 11px;">@vol.SoLuong cuốn</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="detail-actions">
+                <a href="/Admin/Products" class="btn-back">
+                    <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+                <a href="@Url.Action("Edit", new { id = Model.MaSanPham })" class="btn-edit">
+                    <i class="bi bi-pencil-fill"></i> Chỉnh Sửa
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <div class="detail-card-header">
+            <h2>Hình Ảnh Sách</h2>
+        </div>
+        <div class="detail-card-body" style="text-align:center;">
+            @if (!string.IsNullOrEmpty(Model.Anh))
+            {
+                string imgSrc = Model.Anh.StartsWith("http") || Model.Anh.StartsWith("/") ? Model.Anh : "/Images/" + Model.Anh;
+                <img src="@imgSrc" alt="@Model.TenSanPham" class="detail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div style="display:none; background:#f8fafc; border:2px dashed #e2e8f0; border-radius:12px; height:300px; flex-direction:column; align-items:center; justify-content:center; color:#cbd5e1;">
+                    <i class="bi bi-image" style="font-size:48px;"></i>
+                    <span style="font-size:12px; margin-top:8px;">Không có hình ảnh</span>
+                </div>
+            }
+            else
+            {
+                <div style="background:#f8fafc; border:2px dashed #e2e8f0; border-radius:12px; height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#cbd5e1;">
+                    <i class="bi bi-image" style="font-size:48px;"></i>
+                    <span style="font-size:12px; margin-top:8px;">Không có hình ảnh</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>

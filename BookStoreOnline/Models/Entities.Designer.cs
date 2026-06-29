@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\Admin\OneDrive\Máy tính\BookStoreProject\BookStoreOnline\Models\Entities.edmx'. 
+﻿// T4 code generation is enabled for model 'E:\Nam_III\HK_III\Thuong_Mai_Dien_Tu\Thuc_Hanh\thenau-master\thenau-master\BookStoreOnline\Models\Entities.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

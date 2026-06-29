@@ -85,13 +85,13 @@
         text-decoration:none; transition:all 0.2s; cursor:pointer; white-space:nowrap;
     }
     .btn-del:hover { background:#fecaca; color:#7f1d1d; text-decoration:none; }
-    .btn-clone {
+    .btn-details {
         display:inline-flex; align-items:center; gap:4px;
         background:#f0f9ff; color:#0369a1; border:none; border-radius:7px;
         padding:5px 12px; font-size:11px; font-weight:700;
         text-decoration:none; transition:all 0.2s; cursor:pointer; white-space:nowrap;
     }
-    .btn-clone:hover { background:#e0f2fe; color:#075985; text-decoration:none; }
+    .btn-details:hover { background:#e0f2fe; color:#075985; text-decoration:none; }
     .empty-state { text-align:center; padding:48px 20px; color:#94a3b8; }
     .empty-state i { font-size:40px; margin-bottom:12px; display:block; }
 </style>
@@ -120,8 +120,6 @@
                 <tr>
                     <th style="width:70px">Ảnh</th>
                     <th>Tên Sách</th>
-                    <th>Tác Giả</th>
-                    <th>Thể Loại</th>
                     <th>Giá</th>
                     <th style="width:80px">Số Lượng</th>
                     <th style="width:200px; text-align:center;">Thao Tác</th>
@@ -148,8 +146,6 @@
                             <td>
                                 <div class="product-name">@Html.DisplayFor(modelItem => item.TenSanPham)</div>
                             </td>
-                            <td>@Html.DisplayFor(modelItem => item.TacGia)</td>
-                            <td><span class="category-tag">@Html.DisplayFor(modelItem => item.LOAI.Tenloai)</span></td>
                             <td><span class="price-badge">@String.Format("{0:N0}đ", item.Gia)</span></td>
                             <td><span class="qty-badge">@Html.DisplayFor(modelItem => item.SoLuong)</span></td>
                             <td>
@@ -157,8 +153,8 @@
                                     <a href="@Url.Action("Edit", new { id = item.MaSanPham })" class="btn-edit">
                                         <i class="bi bi-pencil-fill"></i> Sửa
                                     </a>
-                                    <a href="@Url.Action("Clone", new { id = item.MaSanPham })" class="btn-clone">
-                                        <i class="bi bi-copy"></i> Nhân Bản
+                                    <a href="@Url.Action("Details", new { id = item.MaSanPham })" class="btn-details">
+                                        <i class="bi bi-info-circle"></i> Chi Tiết
                                     </a>
                                     <a href="@Url.Action("Delete", new { id = item.MaSanPham })" class="btn-del">
                                         <i class="bi bi-trash-fill"></i> Xóa
@@ -171,7 +167,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="7">
+                        <td colspan="5">
                             <div class="empty-state">
                                 <i class="bi bi-book"></i>
                                 Không tìm thấy sách nào. Hãy thêm sách mới!

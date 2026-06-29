@@ -117,13 +117,17 @@
                                 }
                             </td>
                             <td>
-                                @if (item.TrangThai)
+                                @if (item.TrangThai == true)
                                 {
-                                    <span class="status-active"><i class="bi bi-check-circle-fill me-1"></i>Kích Hoạt</span>
+                                    <span class="status-active">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Kích Hoạt
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="status-disabled"><i class="bi bi-x-circle-fill me-1"></i>Vô Hiệu Hóa</span>
+                                    <span class="status-disabled">
+                                        <i class="bi bi-x-circle-fill me-1"></i>Vô Hiệu Hóa
+                                    </span>
                                 }
                             </td>
                             <td>
@@ -135,7 +139,7 @@
                                         <i class="bi bi-eye-fill"></i> Chi Tiết
                                     </a>
                                     
-                                    @if (item.TrangThai)
+                                    @if (item.TrangThai == true)
                                     {
                                         <a href="@Url.Action("DisableAccount", new { id = item.MaKH })" class="btn-action-warn">
                                             <i class="bi bi-lock-fill"></i> Khóa

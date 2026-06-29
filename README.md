@@ -91,3 +91,17 @@ Dự án thực hành môn học Thương mại điện tử: Xây dựng websit
   - **Khắc phục lỗi hiển thị trang Edit & Detail:** Sửa lỗi ép kiểu `ViewBag.Volumes` từ `List<dynamic>` sang `List<VolumeDto>` giúp hiển thị chính xác danh sách tập sách đã lưu khi Admin chỉnh sửa sản phẩm và khi User xem chi tiết sách.
   - **Bổ sung Script & Điều khiển số lượng mua:** Bổ sung thẻ `<script>` bị thiếu, định nghĩa hàm gọi AJAX tải bình luận (`loadReviews`), hàm cập nhật số lượng tối đa theo tập (`updateMaxQty`), và hàm tăng giảm số lượng sản phẩm (`adjustQty`) cho các nút `+` và `-`.
 
+#### 5. Cập nhật Giao diện & Sửa lỗi Admin Products (Cập nhật mới ngày 29/06/2026)
+- **Thiết kế lại danh sách sản phẩm (`/Admin/Products`):**
+  - Loại bỏ 2 cột **Tác Giả** và **Thể Loại** khỏi bảng để giao diện gọn gàng, tập trung hơn.
+  - Chuyển nút hành động từ **Nhân Bản** thành **Chi Tiết**, liên kết đến trang chi tiết sản phẩm của Admin với icon `bi-info-circle`.
+  - Cập nhật `colspan` dòng trống từ 7 xuống 5 đảm bảo không lệch khung khi không có sách.
+- **Nâng cấp trang Chi tiết sản phẩm (`Details.cshtml`):**
+  - Chuyển đổi sang layout cao cấp `_LayoutAdmin.cshtml`.
+  - Thiết kế lại bố cục responsive dạng lưới 2 cột: Cột trái hiển thị thông tin sách và các tập sách hiện có; cột phải hiển thị ảnh bìa nổi bật.
+  - Sửa lỗi hiển thị **Thể loại** (Chưa phân loại) bằng cách truy vấn và duyệt hiển thị toàn bộ thể loại từ bảng `SANPHAM_LOAI`.
+  - Hiển thị trực quan danh sách các tập sách và số lượng tồn kho từng tập.
+- **Sửa lỗi đồng bộ và xóa tập sách:**
+  - Bổ sung logic đối chiếu ID tập sách gửi lên từ Form Edit với Database, tự động thực hiện truy vấn `DELETE` để xóa các tập sách đã bị Admin nhấn nút **Xóa (X)**.
+  - Sửa logic tính tổng số lượng tồn kho của sách đảm bảo cập nhật chuẩn xác khi sửa đổi số lượng hoặc xóa tập sách.
+

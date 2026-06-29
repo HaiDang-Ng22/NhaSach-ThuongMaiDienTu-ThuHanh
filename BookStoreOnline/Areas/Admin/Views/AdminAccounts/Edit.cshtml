@@ -96,8 +96,12 @@
             <div class="form-group">
                 <label class="admin-label">Trạng Thái</label>
                 <select id="TrangThai" name="TrangThai" class="admin-select">
-                    <option value="true" @(Model.TrangThai ? "selected" : "")>✅ Kích Hoạt</option>
-                    <option value="false" @(!Model.TrangThai ? "selected" : "")>🚫 Vô Hiệu Hóa</option>
+                    <option value="true" @(Model.TrangThai == true ? "selected" : "")>
+                        ✅ Kích Hoạt
+                    </option>
+                    <option value="false" @(Model.TrangThai == false ? "selected" : "")>
+                        🚫 Vô Hiệu Hóa
+                    </option>
                 </select>
                 @Html.ValidationMessageFor(model => model.TrangThai, "", new { @class = "field-error" })
             </div>
